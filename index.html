@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberpunk Operator Dashboard - skrhasanshn-afk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-cyan: #00F7FF;
+      --neon-pink: #FF00AA;
+      --neon-yellow: #FEE715;
+      --neon-purple: #9D00FF;
+      --cyber-black: #050811;
+      --cyber-dark: #0A0F1D;
+      --cyber-card: rgba(16, 24, 48, 0.65);
+      --border-glow: rgba(0, 247, 255, 0.3);
+    }
+
+    body {
+      background-color: var(--cyber-black);
+      color: #E2E8F0;
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    .font-mono-code { font-family: 'Fira Code', monospace; }
+
+    /* Animated Grid Background */
+    .cyber-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 247, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 247, 255, 0.05) 1px, transparent 1px);
+      animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 40px; }
+    }
+
+    /* Glitch Animation Effect */
+    .glitch-text {
+      position: relative;
+      display: inline-block;
+      text-shadow: 0 0 10px rgba(0, 247, 255, 0.7);
+    }
+    .glitch-text::before, .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      clip: rect(0, 0, 0, 0);
+    }
+    .glitch-text::before {
+      left: -2px;
+      text-shadow: 2px 0 var(--neon-pink);
+      animation: glitch-anim-1 2s infinite linear alternate-reverse;
+    }
+    .glitch-text::after {
+      left: 2px;
+      text-shadow: -2px 0 var(--neon-cyan);
+      animation: glitch-anim-2 3s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-anim-1 {
+      0% { clip: rect(20px, 9999px, 15px, 0); }
+      20% { clip: rect(40px, 9999px, 55px, 0); }
+      40% { clip: rect(10px, 9999px, 85px, 0); }
+      60% { clip: rect(65px, 9999px, 35px, 0); }
+      80% { clip: rect(80px, 9999px, 5px, 0); }
+      100% { clip: rect(30px, 9999px, 70px, 0); }
+    }
+    @keyframes glitch-anim-2 {
+      0% { clip: rect(70px, 9999px, 5px, 0); }
+      20% { clip: rect(15px, 9999px, 75px, 0); }
+      40% { clip: rect(50px, 9999px, 20px, 0); }
+      60% { clip: rect(25px, 9999px, 90px, 0); }
+      80% { clip: rect(90px, 9999px, 35px, 0); }
+      100% { clip: rect(10px, 9999px, 60px, 0); }
+    }
+
+    /* Cyber Card Styles */
+    .cyber-card {
+      background: var(--cyber-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 247, 255, 0.2);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0, 247, 255, 0.05);
+      position: relative;
+      clip-path: polygon(
+        0 0, 
+        calc(100% - 15px) 0, 
+        100% 15px, 
+        100% 100%, 
+        15px 100%, 
+        0 calc(100% - 15px)
+      );
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .cyber-card:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 30px rgba(0, 247, 255, 0.3), inset 0 0 20px rgba(0, 247, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .cyber-card-pink {
+      border-color: rgba(255, 0, 170, 0.3);
+    }
+    .cyber-card-pink:hover {
+      border-color: var(--neon-pink);
+      box-shadow: 0 0 30px rgba(255, 0, 170, 0.3), inset 0 0 20px rgba(255, 0, 170, 0.1);
+    }
+
+    /* Corner Decorators */
+    .corner-tag {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: var(--neon-cyan);
+    }
+    .top-left-corner { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
+    .bottom-right-corner { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
+
+    /* Scanline effect */
+    .scanline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(0, 247, 255, 0.2);
+      opacity: 0.6;
+      animation: scanline 6s linear infinite;
+      pointer-events: none;
+      z-index: 50;
+    }
+    @keyframes scanline {
+      0% { top: -10px; }
+      100% { top: 100vh; }
+    }
+
+    /* Pulse Glow */
+    .glow-cyan { text-shadow: 0 0 12px var(--neon-cyan); }
+    .glow-pink { text-shadow: 0 0 12px var(--neon-pink); }
+    .glow-purple { text-shadow: 0 0 12px var(--neon-purple); }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--cyber-black); }
+    ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
+  </style>
+</head>
+<body class="cyber-grid min-h-screen pb-16 pt-8 px-4 sm:px-8">
+
+  <!-- Scanline Overlay -->
+  <div class="scanline"></div>
+
+  <!-- Outer HUD Container -->
+  <div class="max-w-6xl mx-auto space-y-8">
+
+    <!-- Top Status Header -->
+    <header class="cyber-card p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-b-2 border-cyan-500/40">
+      <div class="top-left-corner"></div>
+      <div class="bottom-right-corner"></div>
+
+      <!-- Avatar / System Identity -->
+      <div class="flex items-center space-x-5">
+        <div class="relative group">
+          <div class="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+          <img src="https://github.com/skrhasanshn-afk.png" onerror="this.src='https://placehold.co/100x100/0A0F1D/00F7FF?text=DEV'" alt="Avatar" class="relative w-20 h-20 rounded-full border-2 border-cyan-400 object-cover" />
+          <span class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-400 border-2 border-gray-900 rounded-full animate-pulse"></span>
+        </div>
+
+        <div>
+          <div class="flex items-center space-x-3">
+            <h1 class="text-3xl font-extrabold tracking-wider font-orbitron text-white glitch-text" data-text="skrhasanshn-afk">
+              skrhasanshn-afk
+            </h1>
+            <span class="px-2 py-0.5 text-xs font-mono-code bg-cyan-950 text-cyan-300 border border-cyan-500/50 rounded">OPERATOR_ID: #27</span>
+          </div>
+          <p class="text-slate-400 text-sm font-mono-code mt-1 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 bg-pink-500 rounded-full animate-ping"></span>
+            CYBERPUNK DEV • STREAMER • SYSTEM ARCHITECT
+          </p>
+        </div>
+      </div>
+
+      <!-- Live Typing Banner SVG -->
+      <div class="w-full md:w-auto flex justify-center">
+        <img src="https://readme-typing-svg.demolab.com?font=Orbitron&size=22&pause=1000&color=00F7FF&center=true&vCenter=true&width=450&lines=NEON+OPERATOR+ONLINE;skrhasanshn-afk;CYBERPUNK+DEVELOPER+STREAMER;BUILDING+THE+FUTURE" alt="Typing Banner" class="max-w-full" />
+      </div>
+    </header>
+
+    <!-- Status Badges Bar -->
+    <section class="flex flex-wrap items-center justify-center md:justify-start gap-4 p-4 cyber-card">
+      <div class="flex items-center gap-2 bg-emerald-950/40 border border-emerald-500/40 px-3 py-1.5 rounded text-emerald-300 text-sm font-orbitron">
+        <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></span>
+        STATUS: ONLINE
+      </div>
+      <div class="flex items-center gap-2 bg-pink-950/40 border border-pink-500/40 px-3 py-1.5 rounded text-pink-300 text-sm font-orbitron">
+        <span class="text-pink-400">⚡</span>
+        ROLE: CYBERPUNK DEV
+      </div>
+      <div class="flex items-center gap-2 bg-cyan-950/40 border border-cyan-500/40 px-3 py-1.5 rounded text-cyan-300 text-sm font-orbitron">
+        <span class="text-cyan-400">🎮</span>
+        LEVEL: 27
+      </div>
+      <div class="flex items-center gap-2 bg-purple-950/40 border border-purple-500/40 px-3 py-1.5 rounded text-purple-300 text-sm font-orbitron">
+        <span class="text-purple-400">🔥</span>
+        BUILDING THE FUTURE
+      </div>
+    </section>
+
+    <!-- Main Grid Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- Left Column: About & Mission -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- Banner Gif Card -->
+        <div class="cyber-card p-2 overflow-hidden rounded">
+          <img src="https://user-images.githubusercontent.com/74038190/225813708-98b3c1e6-79b4-4d0a-b22d-4b1d9d5f4c4a.gif" alt="Cyber Banner" class="w-full h-auto object-cover rounded opacity-90 hover:opacity-100 transition duration-300" />
+        </div>
+
+        <!-- About Me Section -->
+        <div class="cyber-card p-6 space-y-4">
+          <div class="top-left-corner"></div>
+          <h2 class="text-2xl font-bold font-orbitron text-cyan-400 flex items-center gap-3 border-b border-cyan-500/30 pb-3">
+            <span>🧠</span> SYSTEM OVERVIEW [ ABOUT ME ]
+          </h2>
+          <p class="text-slate-300 text-lg leading-relaxed font-sans">
+            A cyberpunk-minded developer and creator with a gamer’s instinct and a builder’s mindset.  
+            I enjoy exploring code, turning ideas into high-impact digital projects, and leveling up core competencies every single day.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 font-mono-code text-sm">
+            <div class="p-3 bg-slate-900/60 border border-slate-700/50 rounded flex items-center gap-3 text-cyan-300">
+              <span class="text-xl">🎮</span> Gamer Perspective
+            </div>
+            <div class="p-3 bg-slate-900/60 border border-slate-700/50 rounded flex items-center gap-3 text-pink-300">
+              <span class="text-xl">💻</span> Developer Mindset
+            </div>
+            <div class="p-3 bg-slate-900/60 border border-slate-700/50 rounded flex items-center gap-3 text-purple-300">
+              <span class="text-xl">🚀</span> Constant Learner
+            </div>
+            <div class="p-3 bg-slate-900/60 border border-slate-700/50 rounded flex items-center gap-3 text-yellow-300">
+              <span class="text-xl">⚡</span> Purpose-Driven Execution
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Projects -->
+        <div class="cyber-card cyber-card-pink p-6 space-y-4">
+          <h2 class="text-2xl font-bold font-orbitron text-pink-500 flex items-center gap-3 border-b border-pink-500/30 pb-3">
+            <span>🚀</span> ACTIVE REPOSITORIES [ PROJECTS ]
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Project 1 -->
+            <a href="https://github.com/skrhasanshn-afk/LOTUSFLOWER-_skr" target="_blank" class="group block p-4 bg-slate-900/80 border border-pink-500/30 rounded hover:border-pink-500 transition duration-300">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="font-orbitron font-bold text-lg text-white group-hover:text-pink-400 transition">LOTUSFLOWER-_skr</h3>
+                <span class="text-xs font-mono-code bg-pink-950 text-pink-300 px-2 py-0.5 rounded border border-pink-500/40">REPO</span>
+              </div>
+              <p class="text-slate-400 text-xs font-mono-code mb-3">Primary cyberpunk framework project exploring modular design.</p>
+              <div class="text-xs text-pink-400 font-mono-code flex items-center gap-1 group-hover:translate-x-1 transition">
+                <span>View Repository</span> &rarr;
+              </div>
+            </a>
+
+            <!-- Project 2 -->
+            <a href="https://github.com/skrhasanshn-afk/Skrshn388" target="_blank" class="group block p-4 bg-slate-900/80 border border-cyan-500/30 rounded hover:border-cyan-500 transition duration-300">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="font-orbitron font-bold text-lg text-white group-hover:text-cyan-400 transition">Skrshn388</h3>
+                <span class="text-xs font-mono-code bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded border border-cyan-500/40">CORE</span>
+              </div>
+              <p class="text-slate-400 text-xs font-mono-code mb-3">Custom code experiment Hub & utilities engine.</p>
+              <div class="text-xs text-cyan-400 font-mono-code flex items-center gap-1 group-hover:translate-x-1 transition">
+                <span>View Repository</span> &rarr;
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- GitHub Live Analytics -->
+        <div class="cyber-card p-6 space-y-4">
+          <h2 class="text-2xl font-bold font-orbitron text-purple-400 flex items-center gap-3 border-b border-purple-500/30 pb-3">
+            <span>📊</span> OPERATOR TELEMETRY [ STATS ]
+          </h2>
+          <div class="flex justify-center p-2">
+            <img src="https://github-readme-stats.vercel.app/api?username=skrhasanshn-afk&show_icons=true&theme=dracula&hide_border=true&title_color=00F7FF&icon_color=FF00AA&text_color=EAEAEA" alt="GitHub Stats" class="w-full max-w-xl rounded" />
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Tech Stack & Communications -->
+      <div class="space-y-8">
+
+        <!-- Tech Stack Badges -->
+        <div class="cyber-card p-6 space-y-4">
+          <h2 class="text-2xl font-bold font-orbitron text-cyan-400 flex items-center gap-3 border-b border-cyan-500/30 pb-3">
+            <span>🛠️</span> TECH STACK
+          </h2>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1.5 bg-orange-950/60 border border-orange-500/40 text-orange-300 font-mono-code text-xs rounded flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-orange-500"></span> HTML5
+            </span>
+            <span class="px-3 py-1.5 bg-blue-950/60 border border-blue-500/40 text-blue-300 font-mono-code text-xs rounded flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span> CSS3
+            </span>
+            <span class="px-3 py-1.5 bg-yellow-950/60 border border-yellow-500/40 text-yellow-300 font-mono-code text-xs rounded flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-yellow-400"></span> JavaScript
+            </span>
+            <span class="px-3 py-1.5 bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 font-mono-code text-xs rounded flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Python
+            </span>
+            <span class="px-3 py-1.5 bg-slate-900 border border-slate-500/40 text-slate-300 font-mono-code text-xs rounded flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span> GitHub
+            </span>
+          </div>
+        </div>
+
+        <!-- Current Mission Directives -->
+        <div class="cyber-card p-6 space-y-4">
+          <h2 class="text-2xl font-bold font-orbitron text-yellow-400 flex items-center gap-3 border-b border-yellow-500/30 pb-3">
+            <span>🧩</span> DIRECTIVES
+          </h2>
+          <ul class="space-y-3 font-mono-code text-sm text-slate-300">
+            <li class="flex items-start gap-3">
+              <span class="text-cyan-400 font-bold">&gt;</span> Build high-utility, purpose-driven applications
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-pink-400 font-bold">&gt;</span> Expand knowledge base through daily practice
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-purple-400 font-bold">&gt;</span> Elevate code architecture & performance
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-yellow-400 font-bold">&gt;</span> Continuously ship digital experiences
+            </li>
+          </ul>
+        </div>
+
+        <!-- Streamer & Contact Matrix -->
+        <div class="cyber-card p-6 space-y-4">
+          <h2 class="text-2xl font-bold font-orbitron text-pink-500 flex items-center gap-3 border-b border-pink-500/30 pb-3">
+            <span>🎧</span> COMMS MATRIX
+          </h2>
+          <div class="space-y-3 font-mono-code text-sm">
+            <a href="https://github.com/skrhasanshn-afk" target="_blank" class="flex items-center justify-between p-2.5 bg-slate-900/60 rounded border border-slate-800 hover:border-cyan-400 text-slate-300 hover:text-cyan-300 transition">
+              <span class="text-slate-400">GitHub:</span>
+              <span>@skrhasanshn-afk</span>
+            </a>
+            <div class="flex items-center justify-between p-2.5 bg-slate-900/60 rounded border border-slate-800 text-slate-300">
+              <span class="text-slate-400">Discord:</span>
+              <span class="text-pink-400 font-bold">your-discord-tag</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-900/60 rounded border border-slate-800 text-slate-300">
+              <span class="text-slate-400">Email:</span>
+              <span class="text-yellow-400">your-email@example.com</span>
+            </div>
+            <a href="https://your-portfolio-link.com" target="_blank" class="flex items-center justify-between p-2.5 bg-slate-900/60 rounded border border-slate-800 hover:border-purple-400 text-slate-300 hover:text-purple-300 transition">
+              <span class="text-slate-400">Portfolio:</span>
+              <span>your-portfolio.com</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Interactive Terminal Quote Box -->
+        <div class="cyber-card p-6 bg-slate-950/80">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+            <span class="text-xs font-mono-code text-cyan-400 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400"></span> TERMINAL_QUOTE.SH
+            </span>
+            <span class="text-xs text-slate-500 font-mono-code">READ-ONLY</span>
+          </div>
+          <blockquote class="text-pink-300 italic font-mono-code text-sm leading-relaxed">
+            "Every line of code is a new weapon. Every fix is a win. Every project is a new world."
+          </blockquote>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Terminal Footer -->
+    <footer class="cyber-card p-6 text-center space-y-3 border-t-2 border-pink-500/40">
+      <div class="flex justify-center">
+        <img src="https://img.shields.io/badge/BUILDING-THE-FUTURE-00F7FF?style=for-the-badge" alt="Building The Future Badge" />
+      </div>
+      <p class="text-xs font-mono-code text-slate-500">
+        SYSTEM OPERATIONAL • HOSTED ON GITHUB READMES • CYBERPUNK HUD v2.0
+      </p>
+    </footer>
+
+  </div>
+
+</body>
+</html>
